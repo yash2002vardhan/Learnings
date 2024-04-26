@@ -1,0 +1,63 @@
+import csv
+
+
+class Item:
+
+    pay_rate = 0.8 # this is a class attribute
+    all = []
+    def __init__(self, name: str, price: float, quantity: int):  # clearly defined the type of input required
+
+        # run validations to the received arguments
+        assert type(price) == float, f"price {price} is not float"  # assert will validate the arguments with the passed conditions and if error found will send
+        assert type(quantity) == int, f"quantity {quantity} is not int" # the message
+        
+        #assign to sefl object
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+
+        # actions
+        Item.all.append(self)
+
+
+    def calculate_total_price(self):
+        return self.price*self.quantity
+    
+    def apply_discount(self):
+        self.price = self.price * self.pay_rate # we can also do self.calculate_total_price()*Item.pay_rate , 
+                                                        # pay_rate can be accessed by both class and instance
+        
+    # def instantiate_from_csv(self):  # we have to convert this to a class method, as this method itself is responsible for instantiating an instance
+    @classmethod # a decorator for converting this to a class method    
+    def instantiate_from_csv(cls):  # class wil be passed as an argument
+        with open('items.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            items = list(reader)
+        
+        for item in items:
+            Item(
+                name = item.get('name'),
+                price = float(item.get('price')),
+                quantity = int(item.get('quantity')),
+
+            )
+    @staticmethod # does not receive any class or instance as an argument
+    def check_integer(num):
+        # we will count out the floats that are point zero
+        # example : 10.0, 5.0
+        if isinstance(num, float):
+            return num.is_integer() # returns True for floats with point zero and false otherwise
+        elif isinstance(num, int):
+            return True
+        else:
+            return False
+
+
+    def __repr__(self):  # returns the representation version of the instances of the class
+        return f"Item('{self.name}', '{self.price}', '{self.quantity}')"
+
+
+# accessing the static methods
+
+print(Item.check_integer(5.5)) # will return False
+print(Item.check_integer(5.0)) # will return True

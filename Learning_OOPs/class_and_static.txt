@@ -1,0 +1,3 @@
+use class methods when you need to instantiate any instance of the class
+
+use static methods, when you need a standard function for a class rather than specific to the object  
